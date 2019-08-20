@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "lecture2",
+    "mdp",
+    "evolution",
+]
