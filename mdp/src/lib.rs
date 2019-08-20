@@ -1,12 +1,14 @@
-pub type StateIndex = usize;
+type StateIndex = usize;
 
+#[derive(Debug)]
 pub struct StateData {
     label: &'static str,
     first_outgoing_edge: Option<ActionIndex>,
 }
 
-pub type ActionIndex = usize;
+type ActionIndex = usize;
 
+#[derive(Debug)]
 pub struct ActionOutcome {
     pub state: StateIndex,
     pub probability: f64,
@@ -24,23 +26,25 @@ impl ActionOutcome {
     }
 }
 
+#[derive(Debug)]
 pub struct ActionData {
-    outcomes: Vec<ActionOutcome>,
+    pub outcomes: Vec<ActionOutcome>,
     next_outgoing_edge: Option<ActionIndex>,
-    reward: f64,
+    pub reward: f64,
 }
 
+#[derive(Debug)]
 pub struct MDP {
     nodes: Vec<StateData>,
     edges: Vec<ActionData>,
 }
 
-pub struct Actions<'graph> {
+pub struct ActionsIterator<'graph> {
     mdp: &'graph MDP,
     current_edge_index: Option<ActionIndex>,
 }
 
-impl<'graph> Iterator for Actions<'graph> {
+impl<'graph> Iterator for ActionsIterator<'graph> {
     type Item = &'graph ActionData;
     fn next(&mut self) -> Option<&'graph ActionData> {
         match self.current_edge_index {
@@ -82,9 +86,9 @@ impl MDP {
         node_data.first_outgoing_edge = Some(edge_index);
     }
 
-    pub fn actions(&self, source: StateIndex) -> Actions {
+    pub fn actions(&self, source: StateIndex) -> ActionsIterator {
         let first_outgoing_edge = self.nodes[source].first_outgoing_edge;
-        Actions {
+        ActionsIterator {
             mdp: self,
             current_edge_index: first_outgoing_edge,
         }
