@@ -1,4 +1,4 @@
-use mdp::{ActionData, ActionOutcome, StateData, MDP};
+use mdp::{ActionData, ActionOutcome, MDP};
 use rand::prelude::*;
 use rand::seq::SliceRandom;
 use rand::distributions::WeightedIndex;
@@ -27,23 +27,19 @@ fn main() {
 
     let mut reward = 0.0;
     let mut current_state = class1;
+    let mut timesteps = 0;
     loop {
-        println!("current state: {:?}", current_state);
-        let actions: Vec<&ActionData> = g.actions(class1).collect();
-        println!("available actions: {:?}", actions);
+        println!("current state: {:?}", g.get_state(current_state));
+        let actions: Vec<&ActionData> = g.actions(current_state).collect();
         let action = first_action_policy(&actions);
-        println!("choose action: {:?}", action);
         reward += action.reward;
         let dist = WeightedIndex::new(action.outcomes.iter().map(|outcome| outcome.probability)).unwrap();
         current_state = action.outcomes[dist.sample(&mut rand::thread_rng())].state;
-        println!("State changed to: {:?}", current_state);
         println!();
+        timesteps+=1;
         if current_state == sleep {
             break
         }
-        if current_state != 0 && current_state != 2 {
-            break
-        }
     }
-    println!("{:?}", reward)
+    println!("reward: {:?}, timesteps: {}", reward, timesteps);
 }

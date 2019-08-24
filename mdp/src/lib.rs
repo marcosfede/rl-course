@@ -2,7 +2,7 @@ type StateIndex = usize;
 
 #[derive(Debug)]
 pub struct StateData {
-    label: &'static str,
+    pub label: &'static str,
     first_outgoing_edge: Option<ActionIndex>,
 }
 
@@ -64,6 +64,10 @@ impl MDP {
             nodes: Vec::new(),
             edges: Vec::new(),
         }
+    }
+
+    pub fn get_state(&self, index: StateIndex) -> &StateData {
+        &self.nodes[index]
     }
 
     pub fn add_state(&mut self, label: &'static str) -> StateIndex {
